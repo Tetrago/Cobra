@@ -12,14 +12,13 @@ import java.io.PrintStream;
 
 public class TestProgram extends Program
 {
+    private Matrix4f view_;
+    private float angle_;
+
     public TestProgram()
     {
         super("Test");
-    }
 
-    @Override
-    public void setup()
-    {
         Events.LOG.listen(e ->
         {
             PrintStream stream = e.level == LogLevel.ERROR ? System.err : System.out;
@@ -36,13 +35,27 @@ public class TestProgram extends Program
     }
 
     @Override
+    public void setup()
+    {
+        final float scale = 10.0f / window().width();
+
+        float we = window().width() * scale * 0.5f;
+        float he = window().height() * scale * 0.5f;
+
+        view_ = new Matrix4f().translate(0, 0, 1).ortho(-we, we, -he, he, 0.1f, 1000);
+    }
+
+    @Override
     public void update()
     {
+        angle_ += 0.1f;
+
         Renderer.clear();
-        Renderer2D.begin(new Matrix4f());
+        Renderer2D.prepare(view_);
 
-        Renderer2D.drawQuad(Color.BLUE, new Vector2f(0.5f, 0.5f), Math.toRadians(45), new Vector2f(1));
+        Renderer2D.drawQuad(Color.BLUE, new Vector2f(1, 0), Math.toRadians(angle_), new Vector2f(1));
+        Renderer2D.drawQuad(Color.RED, new Vector2f(-1, 0), Math.toRadians(0), new Vector2f(1));
 
-        Renderer2D.end();
+        Renderer2D.flush();
     }
 }
