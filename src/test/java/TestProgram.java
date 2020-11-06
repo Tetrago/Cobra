@@ -1,19 +1,22 @@
-import org.joml.Math;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import tetrago.cobra.core.LogLevel;
 import tetrago.cobra.core.Program;
 import tetrago.cobra.event.Events;
 import tetrago.cobra.graphics.Color;
 import tetrago.cobra.graphics.Renderer;
 import tetrago.cobra.graphics.Renderer2D;
+import tetrago.cobra.node.Node;
+import tetrago.cobra.node.Node2D;
+import tetrago.cobra.node.Scene;
+import tetrago.cobra.node.SpriteRenderer;
 
 import java.io.PrintStream;
 
 public class TestProgram extends Program
 {
     private Matrix4f view_;
-    private float angle_;
+    private Scene scene_;
+    private PlayerController player_;
 
     public TestProgram()
     {
@@ -43,18 +46,19 @@ public class TestProgram extends Program
         float he = window().height() * scale * 0.5f;
 
         view_ = new Matrix4f().translate(0, 0, 1).ortho(-we, we, -he, he, 0.1f, 1000);
+
+        scene_ = new Scene();
+        player_ = scene_.root().add(PlayerController.class, "Player");
+        player_.add(SpriteRenderer.class).color = Color.BLUE;
     }
 
     @Override
     public void update()
     {
-        angle_ += 0.1f;
-
         Renderer.clear();
         Renderer2D.prepare(view_);
 
-        Renderer2D.drawQuad(Color.BLUE, new Vector2f(1, 0), Math.toRadians(angle_), new Vector2f(1));
-        Renderer2D.drawQuad(Color.RED, new Vector2f(-1, 0), Math.toRadians(0), new Vector2f(1));
+        scene_.update();
 
         Renderer2D.flush();
     }

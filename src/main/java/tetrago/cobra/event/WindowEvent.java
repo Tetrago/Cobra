@@ -7,7 +7,8 @@ public class WindowEvent
     public enum Type
     {
         CLOSE,
-        RESIZE
+        RESIZE,
+        KEY
     }
 
     private final Window window_;
@@ -19,6 +20,6 @@ public class WindowEvent
         type_ = type;
     }
 
-    public Window getWindow() { return window_; }
-    public Type getType() { return type_; }
+    public Window window() { return window_; }
+    public Type type() { return type_; }
 }

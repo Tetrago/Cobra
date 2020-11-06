@@ -3,9 +3,11 @@ package tetrago.cobra.graphics;
 import tetrago.cobra.core.IClosable;
 import tetrago.cobra.core.Logger;
 import tetrago.cobra.event.Events;
+import tetrago.cobra.event.KeyEvent;
 import tetrago.cobra.event.WindowEvent;
 import tetrago.cobra.event.WindowResizeEvent;
 import tetrago.cobra.graphics.Graphics;
+import tetrago.cobra.io.Key;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -72,6 +74,14 @@ public class Window implements IClosable
             height_ = h;
 
             Events.WINDOW.emit(new WindowResizeEvent(this, WindowEvent.Type.RESIZE, w, h));
+        });
+
+        glfwSetKeyCallback(handle_, (window, key, scancode, action, mods) ->
+        {
+            if(action != GLFW_REPEAT)
+            {
+                Events.WINDOW.emit(new KeyEvent(this, key, action == GLFW_PRESS));
+            }
         });
     }
 

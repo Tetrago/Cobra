@@ -1,11 +1,13 @@
-package tetrago.cobra.core;
+package tetrago.cobra.io;
+
+import tetrago.cobra.core.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class IO
+public class Resource
 {
     public static String toString(InputStream stream)
     {

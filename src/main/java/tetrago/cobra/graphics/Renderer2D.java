@@ -4,7 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import tetrago.cobra.core.Cell;
-import tetrago.cobra.core.IO;
+import tetrago.cobra.io.Resource;
 
 public class Renderer2D
 {
@@ -33,7 +33,7 @@ public class Renderer2D
         vao.attachVertexBuffer(new Cell<>(Storage.uvBuffer), new VertexArray.Layout(1, 2, VertexArray.ValueType.FLOAT));
         vao.attachVertexBuffer(new Cell<>(Storage.colorBuffer), new VertexArray.Layout(2, 4, VertexArray.ValueType.FLOAT));
 
-        Storage.shader = new Shader(IO.toString(Renderer2D.class.getResourceAsStream("renderer_2d.shader")));
+        Storage.shader = new Shader(Resource.toString(Renderer2D.class.getResourceAsStream("renderer_2d.shader")));
 
         loadIndices();
     }

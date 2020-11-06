@@ -3,9 +3,9 @@ package tetrago.cobra.core;
 import tetrago.cobra.event.Events;
 import tetrago.cobra.event.WindowEvent;
 import tetrago.cobra.graphics.RenderStack;
-import tetrago.cobra.graphics.Renderer;
 import tetrago.cobra.graphics.Renderer2D;
 import tetrago.cobra.graphics.Window;
+import tetrago.cobra.io.Keyboard;
 
 public abstract class Program implements IClosable
 {
@@ -22,11 +22,12 @@ public abstract class Program implements IClosable
         logger_ = new Logger(name);
         window_ = new Window(1024, 576, name);
 
+        Keyboard.init();
         Renderer2D.init();
 
         Events.WINDOW.listen(e ->
         {
-            if(running_ && e.getWindow() == window_ && e.getType() == WindowEvent.Type.CLOSE)
+            if(running_ && e.window() == window_ && e.type() == WindowEvent.Type.CLOSE)
             {
                 stop();
             }
@@ -49,6 +50,7 @@ public abstract class Program implements IClosable
         running_ = true;
         while(running_)
         {
+            Time.tick();
             window_.update();
 
             update();

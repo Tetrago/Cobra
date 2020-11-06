@@ -2,6 +2,7 @@ package tetrago.cobra.graphics;
 
 import org.lwjgl.opengl.GL;
 import tetrago.cobra.core.IClosable;
+import tetrago.cobra.core.Logger;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
