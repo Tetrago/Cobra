@@ -89,6 +89,23 @@ public class Shader implements IClosable
         glUniformMatrix4fv(getLocation(name), false, v.get(buffer));
     }
 
+    public void upload(String name, Texture texture)
+    {
+        glUniform1i(getLocation(name), texture.handle());
+    }
+
+    public void upload(String name, Texture[] textures)
+    {
+        int[] handles = new int[textures.length];
+
+        for(int i = 0; i < textures.length; ++i)
+        {
+            handles[i] = textures[i] != null ? textures[i].handle() : 0;
+        }
+
+        glUniform1iv(getLocation(name), handles);
+    }
+
     private int getLocation(String name)
     {
         if(locations_.containsKey(name))

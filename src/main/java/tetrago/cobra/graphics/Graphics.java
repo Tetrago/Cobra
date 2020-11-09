@@ -52,6 +52,15 @@ public class Graphics implements IClosable
         glUseProgram(shader.handle());
     }
 
+    public void setTextures(Texture[] textures)
+    {
+        for(int i = 0; i < textures.length; ++i)
+        {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, textures[i].handle());
+        }
+    }
+
     public void swap()
     {
         window_.swap();
