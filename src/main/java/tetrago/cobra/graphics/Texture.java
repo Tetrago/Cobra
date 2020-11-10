@@ -3,16 +3,22 @@ package tetrago.cobra.graphics;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import tetrago.cobra.core.IClosable;
+import tetrago.cobra.core.Logger;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
+import static org.lwjgl.stb.STBImage.*;
 
 public class Texture implements IClosable
 {
     private final int handle_;
+    private ByteBuffer stbi_;
+
+    static
+    {
+        stbi_set_flip_vertically_on_load(true);
+    }
 
     public Texture()
     {
@@ -23,20 +29,32 @@ public class Texture implements IClosable
     public void close()
     {
         glDeleteTextures(handle_);
+
+        if(stbi_ != null)
+        {
+            stbi_image_free(stbi_);
+        }
     }
 
-    public void load(ByteBuffer image)
+    public Texture load(byte[] bytes)
     {
         int[] w = new int[1];
         int[] h = new int[1];
         int[] c = new int[1];
 
-        ByteBuffer buffer = stbi_load_from_memory(image, w, h, c, 4);
+        ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
+        stbi_ = stbi_load_from_memory(buffer, w, h, c, 0);
 
-        create(w[0], h[0], c[0], buffer);
+        String err = stbi_failure_reason();
+        if(err != null)
+        {
+            Logger.COBRA.error("Failed to load image: %s", err);
+        }
+
+        return create(w[0], h[0], c[0], stbi_);
     }
 
-    public void create(int w, int h, int c, ByteBuffer buffer)
+    public Texture create(int w, int h, int c, ByteBuffer buffer)
     {
         glBindTexture(GL_TEXTURE_2D, handle_);
 
@@ -61,6 +79,8 @@ public class Texture implements IClosable
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        return this;
     }
 
     public void setPixels(int w, int h, Vector4f[] colors)

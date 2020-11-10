@@ -1,13 +1,11 @@
 package tetrago.cobra.io;
 
-import org.lwjgl.BufferUtils;
 import tetrago.cobra.core.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
 
 public class Resource
 {
@@ -32,17 +30,15 @@ public class Resource
         return builder.toString();
     }
 
-    public static ByteBuffer toBytes(InputStream stream)
+    public static byte[] toBytes(InputStream stream)
     {
         try
         {
-            ByteBuffer bytes = BufferUtils.createByteBuffer(stream.available());
-            stream.read(bytes.array());
-            return bytes;
+            return stream.readAllBytes();
         }
         catch(IOException e)
         {
-            Logger.COBRA.error("Failed to read to bytes");
+            Logger.COBRA.error("Failed to read stream into bytes");
         }
 
         return null;

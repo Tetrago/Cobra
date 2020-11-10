@@ -1,10 +1,10 @@
 import org.joml.Matrix4f;
+import tetrago.cobra.core.Cell;
 import tetrago.cobra.core.LogLevel;
 import tetrago.cobra.core.Program;
 import tetrago.cobra.event.Events;
-import tetrago.cobra.graphics.Color;
-import tetrago.cobra.graphics.Renderer;
-import tetrago.cobra.graphics.Renderer2D;
+import tetrago.cobra.graphics.*;
+import tetrago.cobra.io.Resource;
 import tetrago.cobra.node.Node;
 import tetrago.cobra.node.Node2D;
 import tetrago.cobra.node.Scene;

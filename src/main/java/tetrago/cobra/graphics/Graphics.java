@@ -2,7 +2,6 @@ package tetrago.cobra.graphics;
 
 import org.lwjgl.opengl.GL;
 import tetrago.cobra.core.IClosable;
-import tetrago.cobra.core.Logger;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -59,6 +58,12 @@ public class Graphics implements IClosable
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, textures[i].handle());
         }
+    }
+
+    public void setTexture(int index, Texture texture)
+    {
+        glActiveTexture(GL_TEXTURE0 + index);
+        glBindTexture(GL_TEXTURE_2D, texture.handle());
     }
 
     public void swap()
