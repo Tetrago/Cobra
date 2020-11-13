@@ -1,14 +1,9 @@
 import org.joml.Matrix4f;
-import tetrago.cobra.core.Cell;
 import tetrago.cobra.core.LogLevel;
 import tetrago.cobra.core.Program;
 import tetrago.cobra.event.Events;
 import tetrago.cobra.graphics.*;
-import tetrago.cobra.io.Resource;
-import tetrago.cobra.node.Node;
-import tetrago.cobra.node.Node2D;
-import tetrago.cobra.node.Scene;
-import tetrago.cobra.node.SpriteRenderer;
+import tetrago.cobra.node.*;
 
 import java.io.PrintStream;
 
@@ -16,6 +11,7 @@ public class TestProgram extends Program
 {
     private Matrix4f view_;
     private Scene scene_;
+    private Camera camera_;
     private PlayerController player_;
 
     public TestProgram()
@@ -40,26 +36,29 @@ public class TestProgram extends Program
     @Override
     public void setup()
     {
-        final float scale = 10.0f / window().width();
-
-        float we = window().width() * scale * 0.5f;
-        float he = window().height() * scale * 0.5f;
-
-        view_ = new Matrix4f().translate(0, 0, 1).ortho(-we, we, -he, he, 0.1f, 1000);
-
         scene_ = new Scene();
+        camera_ = scene_.root().add(Ortho2DCamera.class, "Main Camera");
+
         player_ = scene_.root().add(PlayerController.class, "Player");
-        player_.add(SpriteRenderer.class).color = Color.BLUE;
+        player_.add(SpriteRenderer.class).color = Color.GREEN;
+
+        scene_.start();
     }
 
     @Override
     public void update()
     {
         Renderer.clear();
-        Renderer2D.prepare(view_);
+        Renderer2D.prepare(camera_);
 
         scene_.update();
 
         Renderer2D.flush();
+    }
+
+    @Override
+    public void clean()
+    {
+        scene_.stop();
     }
 }

@@ -5,6 +5,7 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 import tetrago.cobra.core.Cell;
 import tetrago.cobra.io.Resource;
+import tetrago.cobra.node.Camera;
 
 public class Renderer2D
 {
@@ -69,10 +70,10 @@ public class Renderer2D
         vao_.close();
     }
 
-    public static void prepare(Matrix4f matrix)
+    public static void prepare(Camera camera)
     {
         RenderStack.current().setShader(shader_);
-        shader_.upload("u_matrix", matrix);
+        shader_.upload("u_matrix", camera.view());
     }
 
     public static void flush()

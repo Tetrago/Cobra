@@ -39,6 +39,8 @@ public abstract class Program implements IClosable
     @Override
     public void close()
     {
+        clean();
+
         Renderer2D.free();
         window_.close();
     }
@@ -68,6 +70,7 @@ public abstract class Program implements IClosable
 
     public abstract void setup();
     public abstract void update();
+    public abstract void clean();
 
     public static Program get()
     {
