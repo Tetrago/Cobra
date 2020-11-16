@@ -1,11 +1,7 @@
 import org.joml.Matrix4f;
-import tetrago.cobra.core.LogLevel;
 import tetrago.cobra.core.Program;
-import tetrago.cobra.event.Events;
 import tetrago.cobra.graphics.*;
 import tetrago.cobra.node.*;
-
-import java.io.PrintStream;
 
 public class TestProgram extends Program
 {
@@ -17,20 +13,6 @@ public class TestProgram extends Program
     public TestProgram()
     {
         super("Test");
-
-        Events.LOG.listen(e ->
-        {
-            PrintStream stream = e.level == LogLevel.ERROR ? System.err : System.out;
-
-            if(e.level == LogLevel.FATAL)
-            {
-                throw new IllegalStateException(String.format("[%s] %s", e.name, e.message));
-            }
-            else
-            {
-                stream.format("[%s] (%s) %s%n", e.name, e.level.toString(), e.message);
-            }
-        });
     }
 
     @Override

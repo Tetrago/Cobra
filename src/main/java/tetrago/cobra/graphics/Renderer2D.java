@@ -3,9 +3,12 @@ package tetrago.cobra.graphics;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
+import org.lwjgl.BufferUtils;
 import tetrago.cobra.core.Cell;
 import tetrago.cobra.io.Resource;
 import tetrago.cobra.node.Camera;
+
+import java.util.stream.IntStream;
 
 public class Renderer2D
 {
@@ -13,16 +16,41 @@ public class Renderer2D
     private static Shader shader_;
 
     private static final int MAX_QUADS = 2000;
+    private static final int MAX_TEXTURES = 16;
 
     private static final float[] vertices_ = new float[MAX_QUADS * 4 * 2];
     private static final float[] uvs_ = new float[MAX_QUADS * 4 * 2];
     private static final float[] colors_ = new float[MAX_QUADS * 4 * 4];
+    private static final float[] textures_ = new float[MAX_QUADS * 4];
 
     private static final Buffer vertexBuffer_ = new Buffer(vertices_.length, Buffer.Usage.DYNAMIC);
     private static final Buffer uvBuffer_ = new Buffer(uvs_.length, Buffer.Usage.DYNAMIC);
     private static final Buffer colorBuffer_ = new Buffer(colors_.length, Buffer.Usage.DYNAMIC);
+    private static final Buffer textureBuffer_ = new Buffer(textures_.length, Buffer.Usage.DYNAMIC);
+
+    private static final Texture[] map_ = new Texture[MAX_TEXTURES];
 
     private static int quadDrawCount_ = 0;
+    private static int textureIndex_ = 1;
+
+    private static int findTexture(Texture texture)
+    {
+        if(textureIndex_ == MAX_TEXTURES)
+        {
+            flush();
+        }
+
+        for(int i = 1; i < textureIndex_; ++i)
+        {
+            if(map_[i] == texture)
+            {
+                return i;
+            }
+        }
+
+        map_[textureIndex_] = texture;
+        return textureIndex_++;
+    }
 
     public static void init()
     {
@@ -30,10 +58,20 @@ public class Renderer2D
         vao_.attachVertexBuffer(new Cell<>(vertexBuffer_), new VertexArray.Layout(0, 2, VertexArray.ValueType.FLOAT));
         vao_.attachVertexBuffer(new Cell<>(uvBuffer_), new VertexArray.Layout(1, 2, VertexArray.ValueType.FLOAT));
         vao_.attachVertexBuffer(new Cell<>(colorBuffer_), new VertexArray.Layout(2, 4, VertexArray.ValueType.FLOAT));
+        vao_.attachVertexBuffer(new Cell<>(textureBuffer_), new VertexArray.Layout(3, 1, VertexArray.ValueType.FLOAT));
 
         shader_ = new Shader(Resource.toString(Renderer2D.class.getResourceAsStream("renderer_2d.shader")));
 
         loadIndices();
+        loadTextures();
+    }
+
+    private static void loadTextures()
+    {
+        RenderStack.current().setShader(shader_);
+        shader_.upload("u_samplers", IntStream.range(0, MAX_TEXTURES).toArray());
+
+        map_[0] = new Texture().setPixels(1, 1, new Vector4f[]{ Color.WHITE });
     }
 
     private static void loadIndices()
@@ -62,6 +100,7 @@ public class Renderer2D
         vertexBuffer_.load(vertices_);
         uvBuffer_.load(uvs_);
         colorBuffer_.load(colors_);
+        textureBuffer_.load(textures_);
     }
 
     public static void free()
@@ -78,18 +117,40 @@ public class Renderer2D
 
     public static void flush()
     {
-        final Graphics g = RenderStack.current();
+        Graphics g = RenderStack.current();
+
+        if(quadDrawCount_ == 0)
+        {
+            return;
+        }
 
         g.setShader(shader_);
         g.setVertexArray(vao_);
+        g.setTextures(map_, textureIndex_);
         loadDynamics();
 
         g.drawIndexed(quadDrawCount_ * 6);
 
         quadDrawCount_ = 0;
+        textureIndex_ = 1;
     }
 
     public static void drawQuad(Vector4f color, Vector2f pos, float radians, Vector2f scale)
+    {
+        drawQuad(0, color, pos, radians, scale);
+    }
+
+    public static void drawQuad(Texture texture, Vector2f pos, float radians, Vector2f scale)
+    {
+        drawQuad(findTexture(texture), Color.WHITE, pos, radians, scale);
+    }
+
+    public static void drawQuad(Texture texture, Vector4f color, Vector2f pos, float radians, Vector2f scale)
+    {
+        drawQuad(findTexture(texture), color, pos, radians, scale);
+    }
+
+    private static void drawQuad(int tex, Vector4f color, Vector2f pos, float radians, Vector2f scale)
     {
         if(quadDrawCount_ >= MAX_QUADS)
         {
@@ -114,6 +175,12 @@ public class Renderer2D
         copyColor(index + 4, color);
         copyColor(index + 4 * 2, color);
         copyColor(index + 4 * 3, color);
+
+        index = quadDrawCount_ * 4;
+        textures_[index] = tex;
+        textures_[index + 1] = tex;
+        textures_[index + 2] = tex;
+        textures_[index + 3] = tex;
 
         ++quadDrawCount_;
     }

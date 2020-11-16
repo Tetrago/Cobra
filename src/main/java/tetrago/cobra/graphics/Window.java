@@ -26,7 +26,7 @@ public class Window implements IClosable
 
             if(referenceCounter_ == 1)
             {
-                if(glfwInit())
+                if(!glfwInit())
                 {
                     Logger.COBRA.fatal("Failed to initialize Glfw");
                 }

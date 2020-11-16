@@ -41,7 +41,7 @@ public class Logger
 
     public void error(String format, Object... args)
     {
-        log(LogLevel.ERROR, String.format(format, args));
+        log(LogLevel.ERROR, format, args);
     }
 
     public void fatal(String format, Object... args)

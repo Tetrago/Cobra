@@ -23,7 +23,6 @@ public abstract class Program implements IClosable
         window_ = new Window(1024, 576, name);
 
         Keyboard.init();
-        Renderer2D.init();
 
         Events.WINDOW.listen(e ->
         {
@@ -41,13 +40,14 @@ public abstract class Program implements IClosable
     {
         clean();
 
-        Renderer2D.free();
         window_.close();
     }
 
     public void run()
     {
         RenderStack.push(window_.graphics());
+
+        Renderer2D.init();
 
         running_ = true;
         while(running_)
@@ -59,6 +59,8 @@ public abstract class Program implements IClosable
 
             RenderStack.current().swap();
         }
+
+        Renderer2D.free();
 
         RenderStack.pop();
     }

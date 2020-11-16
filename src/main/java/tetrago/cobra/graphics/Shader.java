@@ -51,7 +51,8 @@ public class Shader implements IClosable
 
             if(glGetShaderi(id, GL_COMPILE_STATUS) == 0)
             {
-                Logger.COBRA.error("Failed to compile shader: %s", glGetShaderInfoLog(handle_));
+                String err = glGetShaderInfoLog(id);
+                Logger.COBRA.error("Failed to compile shader: %s", err);
             }
 
             glAttachShader(handle_, id);
@@ -89,21 +90,14 @@ public class Shader implements IClosable
         glUniformMatrix4fv(getLocation(name), false, v.get(buffer));
     }
 
-    public void upload(String name, Texture texture)
+    public void upload(String name, int v)
     {
-        glUniform1i(getLocation(name), texture.handle());
+        glUniform1i(getLocation(name), v);
     }
 
-    public void upload(String name, Texture[] textures)
+    public void upload(String name, int[] v)
     {
-        int[] handles = new int[textures.length];
-
-        for(int i = 0; i < textures.length; ++i)
-        {
-            handles[i] = textures[i] != null ? textures[i].handle() : 0;
-        }
-
-        glUniform1iv(getLocation(name), handles);
+        glUniform1iv(getLocation(name), v);
     }
 
     private int getLocation(String name)

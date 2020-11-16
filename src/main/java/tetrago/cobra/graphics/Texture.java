@@ -83,19 +83,19 @@ public class Texture implements IClosable
         return this;
     }
 
-    public void setPixels(int w, int h, Vector4f[] colors)
+    public Texture setPixels(int w, int h, Vector4f[] colors)
     {
-        ByteBuffer bytes = BufferUtils.createByteBuffer(colors.length * 4 * Float.BYTES);
+        ByteBuffer bytes = BufferUtils.createByteBuffer(colors.length * 4 * Integer.BYTES);
 
         for(Vector4f color : colors)
         {
-            bytes.putFloat(color.x)
-                    .putFloat(color.y)
-                    .putFloat(color.z)
-                    .putFloat(color.w);
+            bytes.put((byte) (color.x * 255))
+                    .put((byte)(color.y * 255))
+                    .put((byte)(color.z * 255))
+                    .put((byte)(color.w * 255));
         }
 
-        create(w, h, 4, bytes);
+        return create(w, h, 4, bytes.flip());
     }
 
     public int handle() { return handle_; }
