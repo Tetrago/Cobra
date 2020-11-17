@@ -12,8 +12,32 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture implements IClosable
 {
+    public enum Format
+    {
+        DEPTH(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT),
+        RGB8(GL_RGB8, GL_RGB),
+        RGBA8(GL_RGBA, GL_RGBA);
+
+        private final int internal_, format_;
+
+        Format(int internal, int format)
+        {
+            internal_ = internal;
+            format_ = format;
+        }
+
+        private static Format find(int channels)
+        {
+            switch(channels)
+            {
+            default:
+            case 3: return RGB8;
+            case 4: return RGBA8;
+            }
+        }
+    }
+
     private final int handle_;
-    private ByteBuffer stbi_;
 
     static
     {
@@ -29,21 +53,18 @@ public class Texture implements IClosable
     public void close()
     {
         glDeleteTextures(handle_);
-
-        if(stbi_ != null)
-        {
-            stbi_image_free(stbi_);
-        }
     }
 
     public Texture load(byte[] bytes)
     {
+        stbi_set_flip_vertically_on_load(true);
+
         int[] w = new int[1];
         int[] h = new int[1];
         int[] c = new int[1];
 
         ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
-        stbi_ = stbi_load_from_memory(buffer, w, h, c, 0);
+        ByteBuffer stbi = stbi_load_from_memory(buffer, w, h, c, 0);
 
         String err = stbi_failure_reason();
         if(err != null)
@@ -51,28 +72,17 @@ public class Texture implements IClosable
             Logger.COBRA.error("Failed to load image: %s", err);
         }
 
-        return create(w[0], h[0], c[0], stbi_);
+        create(w[0], h[0], Format.find(c[0]), stbi);
+        stbi_image_free(stbi);
+
+        return this;
     }
 
-    public Texture create(int w, int h, int c, ByteBuffer buffer)
+    public Texture create(int w, int h, Format format, ByteBuffer buffer)
     {
         glBindTexture(GL_TEXTURE_2D, handle_);
 
-        int format, internal;
-        switch(c)
-        {
-        default:
-        case 3:
-            format = GL_RGB;
-            internal = GL_RGB8;
-            break;
-        case 4:
-            format = GL_RGBA;
-            internal = GL_RGBA8;
-            break;
-        }
-
-        glTexImage2D(GL_TEXTURE_2D, 0, internal, w, h, 0, format, GL_UNSIGNED_BYTE, buffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, format.internal_, w, h, 0, format.format_, GL_UNSIGNED_BYTE, buffer);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -95,7 +105,7 @@ public class Texture implements IClosable
                     .put((byte)(color.w * 255));
         }
 
-        return create(w, h, 4, bytes.flip());
+        return create(w, h, Format.RGBA8, bytes.flip());
     }
 
     public int handle() { return handle_; }
