@@ -66,6 +66,16 @@ public class Graphics implements IClosable
         glBindTexture(GL_TEXTURE_2D, texture.handle());
     }
 
+    public void bind(Framebuffer framebuffer)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.handle());
+    }
+
+    public void unbind()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
     public void swap()
     {
         window_.swap();
