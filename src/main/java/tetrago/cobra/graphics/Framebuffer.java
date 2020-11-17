@@ -44,8 +44,8 @@ public class Framebuffer implements IClosable
 
         for(Attachment attachment : attachments)
         {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, attachment.type_.type_, GL_TEXTURE_2D,
-                    attachment.texture_.get().handle(), 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, attachment.type_.type_ + attachment.index_,
+                    GL_TEXTURE_2D, attachment.texture_.get().handle(), 0);
         }
 
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
