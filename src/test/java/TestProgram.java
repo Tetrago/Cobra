@@ -26,7 +26,7 @@ public class TestProgram extends Program
     public void setup()
     {
         scene_ = new Scene();
-        camera_ = scene_.root().add(Ortho2DCamera.class, "Main Camera");
+        camera_ = scene_.root().add(Orthographic2DCamera.class, "Main Camera");
 
         player_ = scene_.root().add(PlayerController.class, "Player");
         player_.add(SpriteRenderer.class).color = Color.GREEN;

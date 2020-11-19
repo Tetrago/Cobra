@@ -6,7 +6,6 @@ import org.joml.Vector4f;
 import tetrago.cobra.core.Cell;
 import tetrago.cobra.core.IClosable;
 import tetrago.cobra.io.Resource;
-import tetrago.cobra.node.Camera;
 
 import java.util.stream.IntStream;
 
@@ -170,7 +169,7 @@ public class Batch2D implements IClosable
         }
 
         int index = quadDrawCount_ * 4 * 2;
-        insertPosition(index, pos, radians, scale);
+        insertPositions(index, pos, radians, scale);
 
         index = quadDrawCount_ * 4 * 2;
         uvs_[index] = uv0.x;
@@ -197,7 +196,7 @@ public class Batch2D implements IClosable
         ++quadDrawCount_;
     }
 
-    private void insertPosition(int index, Vector2f pos, float radians, Vector2f scale)
+    private void insertPositions(int index, Vector2f pos, float radians, Vector2f scale)
     {
         Matrix4f model = new Matrix4f()
                 .translate(pos.x, pos.y, 0)
