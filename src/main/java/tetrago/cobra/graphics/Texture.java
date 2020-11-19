@@ -1,5 +1,6 @@
 package tetrago.cobra.graphics;
 
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import tetrago.cobra.core.IClosable;
@@ -106,6 +107,16 @@ public class Texture implements IClosable
         }
 
         return create(w, h, Format.RGBA8, bytes.flip());
+    }
+
+    public TextureClip clip(Vector2f uv0, Vector2f uv1)
+    {
+        return new TextureClip(this, uv0, uv1);
+    }
+
+    public TextureClip full()
+    {
+        return new TextureClip(this, new Vector2f(0, 0), new Vector2f(1, 1));
     }
 
     public int handle() { return handle_; }

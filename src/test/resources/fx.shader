@@ -23,6 +23,5 @@ uniform sampler2D u_sampler;
 
 void main()
 {
-    vec4 col = texture(u_sampler, _uv);
-    color_ = col.grba;
+    color_ = texture(u_sampler, _uv);
 }

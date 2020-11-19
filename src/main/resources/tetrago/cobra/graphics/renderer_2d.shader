@@ -10,11 +10,11 @@ layout(location = 0) out vec2 _uv;
 layout(location = 1) out vec4 _color;
 layout(location = 2) out float _tex;
 
-uniform mat4 u_matrix;
+uniform mat4 c_matrix;
 
 void main()
 {
-    gl_Position = u_matrix * vec4(position_, 0, 1);
+    gl_Position = c_matrix * vec4(position_, 0, 1);
 
     _uv = uv_;
     _color = color_;

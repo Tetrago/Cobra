@@ -48,15 +48,13 @@ public class TestProgram extends Program
     @Override
     public void update()
     {
-        Renderer.clear();
-
         Graphics g = RenderStack.current();
         g.bind(framebuffer_);
 
+        Renderer.clear();
+
         Renderer2D.prepare(camera_);
-
         scene_.update();
-
         Renderer2D.flush();
 
         g.unbind();

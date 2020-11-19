@@ -58,7 +58,7 @@ public class VertexArray implements IClosable
         buffers_.forEach(Cell::close);
     }
 
-    public void setIndexBuffer(Cell<Buffer> buffer)
+    public VertexArray setIndexBuffer(Cell<Buffer> buffer)
     {
         glBindVertexArray(handle_);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.get().handle());
@@ -66,9 +66,10 @@ public class VertexArray implements IClosable
         glBindVertexArray(0);
 
         index_ = buffer.ref();
+        return this;
     }
 
-    public void attachVertexBuffer(Cell<Buffer> buffer, Layout layout)
+    public VertexArray attachVertexBuffer(Cell<Buffer> buffer, Layout layout)
     {
         glBindVertexArray(handle_);
         glBindBuffer(GL_ARRAY_BUFFER, buffer.get().handle());
@@ -79,6 +80,7 @@ public class VertexArray implements IClosable
         glBindVertexArray(0);
 
         buffers_.add(buffer.ref());
+        return this;
     }
 
     public int handle() { return handle_; }
