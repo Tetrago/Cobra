@@ -46,8 +46,9 @@ public abstract class Program implements IClosable
     public void run()
     {
         RenderStack.push(window_.graphics());
-
         Renderer2D.init();
+
+        onStart();
 
         running_ = true;
         while(running_)
@@ -60,8 +61,9 @@ public abstract class Program implements IClosable
             RenderStack.current().swap();
         }
 
-        Renderer2D.free();
+        onStop();
 
+        Renderer2D.free();
         RenderStack.pop();
     }
 
@@ -71,6 +73,8 @@ public abstract class Program implements IClosable
     }
 
     public abstract void setup();
+    public abstract void onStart();
+    public abstract void onStop();
     public abstract void update();
     public abstract void clean();
 

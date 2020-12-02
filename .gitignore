@@ -1,4 +1,4 @@
 .idea/
 target/
 
-Cobra.iml
+*.iml

@@ -2,6 +2,9 @@ package tetrago.cobra.graphics;
 
 import org.lwjgl.opengl.GL;
 import tetrago.cobra.core.IClosable;
+import tetrago.cobra.event.Events;
+import tetrago.cobra.event.WindowEvent;
+import tetrago.cobra.event.WindowResizeEvent;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -17,6 +20,17 @@ public class Graphics implements IClosable
 
         window.bind();
         GL.createCapabilities();
+
+        Events.WINDOW.listen(e ->
+        {
+            if(e.window() == window && e.type() == WindowEvent.Type.RESIZE)
+            {
+                use();
+
+                WindowResizeEvent wre = (WindowResizeEvent)e;
+                glViewport(0, 0, wre.width(), wre.height());
+            }
+        });
     }
 
     @Override

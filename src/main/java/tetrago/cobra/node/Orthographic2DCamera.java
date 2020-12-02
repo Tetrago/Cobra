@@ -2,11 +2,26 @@ package tetrago.cobra.node;
 
 import org.joml.Matrix4f;
 import tetrago.cobra.core.Program;
+import tetrago.cobra.event.Events;
+import tetrago.cobra.event.WindowEvent;
+import tetrago.cobra.event.WindowResizeEvent;
 import tetrago.cobra.graphics.Window;
 
 public class Orthographic2DCamera extends Camera
 {
     private Matrix4f view_ = new Matrix4f();
+
+    public Orthographic2DCamera()
+    {
+        Events.WINDOW.listen(e ->
+        {
+            if(e.type() == WindowEvent.Type.RESIZE)
+            {
+                WindowResizeEvent wre = (WindowResizeEvent)e;
+                calculateMatrix(wre.width(), wre.height());
+            }
+        });
+    }
 
     private void calculateMatrix(float w, float h)
     {
